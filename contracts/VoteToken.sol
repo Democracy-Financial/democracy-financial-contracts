@@ -420,13 +420,13 @@ contract VoteToken is ERC20('Democracy Financial Vote', 'VOTE') {
     uint256 _competeVotingId = _votingId;
     
     if (votingType == 2) {
-      _competeVotingId = 3 * 1e45 + votingRound * 1e27 + votingId;
+      _competeVotingId = 3e45 + votingRound * 1e27 + votingId;
     } else if (votingType == 3) {
-      _competeVotingId = 2 * 1e45 + votingRound * 1e27 + votingId;
+      _competeVotingId = 2e45 + votingRound * 1e27 + votingId;
     } else if (votingType == 4) {
-      _competeVotingId = 5 * 1e45 + votingRound * 1e27 + votingId;
+      _competeVotingId = 5e45 + votingRound * 1e27 + votingId;
     } else if (votingType == 5) {
-      _competeVotingId = 4 * 1e45 + votingRound * 1e27 + votingId;
+      _competeVotingId = 4e45 + votingRound * 1e27 + votingId;
     }
     
     uint256 verdict = (data.totalVote == voteData[_competeVotingId].totalVote ? 0 : (data.totalVote < voteData[_competeVotingId].totalVote ? 1 : 2));
@@ -465,6 +465,17 @@ contract VoteToken is ERC20('Democracy Financial Vote', 'VOTE') {
     chairClaimLastTimestamp[chairId] = block.timestamp;
     
     emit ClaimChair(msg.sender, chairId);
+  }
+  
+  event DismissChair(address indexed dismisser, address indexed oldRepresentator, uint256 indexed chairId);
+  function dismissChair(uint256 chairId) public {
+    require(voteData[3e45 + chairId] > voteData[2e45 + chairId], "support");
+    
+    emit DismissChair(msg.sender, representators[chairId], chairId);
+    
+    representators[chairId] = address(0);
+    chairClaimMaxScore[chairId] = 0;
+    chairClaimLastTimestamp[chairId] = 0;
   }
   
   event ClaimPresident(address indexed claimer, uint256 indexed chairId);
